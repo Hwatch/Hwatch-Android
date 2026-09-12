@@ -1,6 +1,6 @@
 package com.hwatch.app.data.repository
 
-import com.hwatch.app.data.model.DashboardDto
+import com.hwatch.app.data.auth.AuthStatusDto
 import com.hwatch.app.testutil.FakeHWatchApi
 import java.io.IOException
 import java.net.SocketTimeoutException
@@ -21,37 +21,37 @@ class ServerConnectionRepositoryTest {
 
     @Test
     fun invalidUrlFailsBeforeAnyRequest() = runBlocking {
-        val result = repository(FakeHWatchApi()).testConnection("ftp://nas.local:8787", "zh-CN")
+        val result = repository(FakeHWatchApi()).testConnection("ftp://nas.local:8787")
         assertEquals(ServerConnectionResult.Failure(ConnectionFailure.INVALID_URL), result)
     }
 
     @Test
     fun successReturnsNormalizedUrl() = runBlocking {
-        val api = FakeHWatchApi { DashboardDto(timezone = "Asia/Shanghai") }
-        val result = repository(api).testConnection("192.168.1.10:8787", "zh-CN")
+        val api = FakeHWatchApi(onAuthStatus = { AuthStatusDto(configured = true) })
+        val result = repository(api).testConnection("192.168.1.10:8787")
         assertEquals(ServerConnectionResult.Success("http://192.168.1.10:8787/"), result)
     }
 
     @Test
     fun httpErrorMapsToHttp() = runBlocking {
-        val api = FakeHWatchApi {
+        val api = FakeHWatchApi(onAuthStatus = {
             throw HttpException(
                 Response.error<Any>(
                     500,
                     """{"error":"x"}""".toResponseBody("application/json".toMediaType()),
                 ),
             )
-        }
+        })
         assertEquals(
             ServerConnectionResult.Failure(ConnectionFailure.HTTP),
-            repository(api).testConnection("http://192.168.1.10:8787", "zh-CN"),
+            repository(api).testConnection("http://192.168.1.10:8787"),
         )
     }
 
     @Test
     fun parseErrorMapsToParseWithSanitizedDetail() = runBlocking {
-        val api = FakeHWatchApi { throw SerializationException("bad field external_links[0]") }
-        val result = repository(api).testConnection("http://192.168.1.10:8787", "zh-CN")
+        val api = FakeHWatchApi(onAuthStatus = { throw SerializationException("bad field external_links[0]") })
+        val result = repository(api).testConnection("http://192.168.1.10:8787")
         assertTrue(result is ServerConnectionResult.Failure)
         result as ServerConnectionResult.Failure
         assertEquals(ConnectionFailure.PARSE, result.kind)
@@ -62,19 +62,19 @@ class ServerConnectionRepositoryTest {
 
     @Test
     fun ioErrorMapsToUnreachable() = runBlocking {
-        val api = FakeHWatchApi { throw IOException("no route") }
+        val api = FakeHWatchApi(onAuthStatus = { throw IOException("no route") })
         assertEquals(
             ServerConnectionResult.Failure(ConnectionFailure.UNREACHABLE),
-            repository(api).testConnection("http://192.168.1.10:8787", "zh-CN"),
+            repository(api).testConnection("http://192.168.1.10:8787"),
         )
     }
 
     @Test
     fun timeoutMapsToTimeout() = runBlocking {
-        val api = FakeHWatchApi { throw SocketTimeoutException("timeout") }
+        val api = FakeHWatchApi(onAuthStatus = { throw SocketTimeoutException("timeout") })
         assertEquals(
             ServerConnectionResult.Failure(ConnectionFailure.TIMEOUT),
-            repository(api).testConnection("http://192.168.1.10:8787", "zh-CN"),
+            repository(api).testConnection("http://192.168.1.10:8787"),
         )
     }
 }

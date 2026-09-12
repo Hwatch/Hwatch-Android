@@ -18,7 +18,11 @@ suspend fun <T> safeApiCall(block: suspend () -> T): ApiResult<T> {
     } catch (e: CancellationException) {
         throw e
     } catch (e: HttpException) {
-        ApiResult.HttpError(e.code(), extractErrorMessage(e))
+        when (e.code()) {
+            401 -> ApiResult.Unauthorized(extractErrorMessage(e))
+            403 -> ApiResult.Forbidden(extractErrorMessage(e))
+            else -> ApiResult.HttpError(e.code(), extractErrorMessage(e))
+        }
     } catch (e: java.io.IOException) {
         ApiResult.NetworkError(e)
     } catch (e: kotlinx.serialization.SerializationException) {

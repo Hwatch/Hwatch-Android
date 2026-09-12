@@ -50,6 +50,7 @@ class SubscriptionsViewModel(
                     it.copy(items = result.data.items, isLoading = false, isRefreshing = false, error = null)
                 }
                 is ApiResult.HttpError -> onFailure(isRefresh, SubscriptionsError.HTTP)
+                is ApiResult.Unauthorized, is ApiResult.Forbidden -> onFailure(isRefresh, SubscriptionsError.HTTP)
                 is ApiResult.ParseError -> onFailure(isRefresh, SubscriptionsError.PARSE)
                 is ApiResult.NetworkError -> onFailure(
                     isRefresh,

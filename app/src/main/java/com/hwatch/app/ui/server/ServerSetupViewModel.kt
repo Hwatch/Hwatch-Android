@@ -63,8 +63,7 @@ class ServerSetupViewModel(
             it.copy(isTesting = true, validationError = null, connectionError = null)
         }
         viewModelScope.launch {
-            val language = configRepository.translationLanguage.first()
-            when (val result = connectionRepository.testConnection(rawUrl, language)) {
+            when (val result = connectionRepository.testConnection(rawUrl)) {
                 is ServerConnectionResult.Success -> {
                     configRepository.setServerBaseUrl(result.normalizedUrl)
                     successId += 1

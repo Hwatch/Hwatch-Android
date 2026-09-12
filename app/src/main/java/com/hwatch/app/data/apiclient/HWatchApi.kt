@@ -1,5 +1,9 @@
 package com.hwatch.app.data.apiclient
 
+import com.hwatch.app.data.auth.AuthLogoutResponse
+import com.hwatch.app.data.auth.AuthSessionDto
+import com.hwatch.app.data.auth.AuthStatusDto
+import com.hwatch.app.data.auth.Credentials
 import com.hwatch.app.data.model.ActionResponse
 import com.hwatch.app.data.model.CreateSubscriptionRequest
 import com.hwatch.app.data.model.CreateSubscriptionResponse
@@ -33,6 +37,21 @@ import retrofit2.http.Streaming
 
 /** HWatch HTTP API V1 接口定义。 */
 interface HWatchApi {
+
+    @GET("api/auth/status")
+    suspend fun authStatus(): AuthStatusDto
+
+    @POST("api/auth/setup")
+    suspend fun authSetup(@Body body: Credentials): AuthSessionDto
+
+    @POST("api/auth/login")
+    suspend fun authLogin(@Body body: Credentials): AuthSessionDto
+
+    @GET("api/auth/me")
+    suspend fun authMe(): AuthSessionDto
+
+    @POST("api/auth/logout")
+    suspend fun authLogout(): AuthLogoutResponse
 
     @GET("api/dashboard")
     suspend fun dashboard(@Query("language") language: String? = null): DashboardDto

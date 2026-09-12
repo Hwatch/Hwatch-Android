@@ -157,6 +157,7 @@ class LibraryViewModel(
                     }
                 }
                 is ApiResult.HttpError -> failLoadMore(requestGeneration, LibraryError.HTTP)
+                is ApiResult.Unauthorized, is ApiResult.Forbidden -> failLoadMore(requestGeneration, LibraryError.HTTP)
                 is ApiResult.ParseError -> failLoadMore(requestGeneration, LibraryError.PARSE)
                 is ApiResult.NetworkError -> failLoadMore(
                     requestGeneration,
@@ -203,6 +204,7 @@ class LibraryViewModel(
                 }
             }
             is ApiResult.HttpError -> failFirstPage(requestGeneration, LibraryError.HTTP, isRefresh)
+            is ApiResult.Unauthorized, is ApiResult.Forbidden -> failFirstPage(requestGeneration, LibraryError.HTTP, isRefresh)
             is ApiResult.ParseError -> failFirstPage(requestGeneration, LibraryError.PARSE, isRefresh)
             is ApiResult.NetworkError -> failFirstPage(
                 requestGeneration,

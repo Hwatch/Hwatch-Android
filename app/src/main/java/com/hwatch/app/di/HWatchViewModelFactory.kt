@@ -2,6 +2,7 @@ package com.hwatch.app.di
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
+import com.hwatch.app.ui.auth.AuthViewModel
 import com.hwatch.app.ui.dashboard.DashboardViewModel
 import com.hwatch.app.ui.downloads.DownloadsViewModel
 import com.hwatch.app.ui.library.LibraryViewModel
@@ -51,6 +52,13 @@ class HWatchViewModelFactory(
             modelClass.isAssignableFrom(SettingsViewModel::class.java) ->
                 SettingsViewModel(
                     repository = container.settingsRepository,
+                    configRepository = container.serverConfigStore,
+                ) as T
+
+            modelClass.isAssignableFrom(AuthViewModel::class.java) ->
+                AuthViewModel(
+                    authRepository = container.authRepository,
+                    sessionManager = container.authSessionManager,
                     configRepository = container.serverConfigStore,
                 ) as T
 

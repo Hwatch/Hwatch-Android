@@ -47,7 +47,7 @@ class ServerSetupViewModelTest {
     @Test
     fun successfulConnectionSavesNormalizedUrl() = runTest(dispatcher) {
         val config = FakeServerConfigRepository()
-        val vm = viewModel(FakeHWatchApi { DashboardDto() }, config)
+        val vm = viewModel(FakeHWatchApi(onAuthStatus = { com.hwatch.app.data.auth.AuthStatusDto(configured = true) }), config)
         vm.onServerUrlChanged("192.168.1.10:8787")
         vm.testAndConnect()
         advanceUntilIdle()
@@ -60,7 +60,7 @@ class ServerSetupViewModelTest {
     @Test
     fun failedConnectionDoesNotSaveUrl() = runTest(dispatcher) {
         val config = FakeServerConfigRepository()
-        val vm = viewModel(FakeHWatchApi { throw IOException("no route") }, config)
+        val vm = viewModel(FakeHWatchApi(onAuthStatus = { throw IOException("no route") }), config)
         vm.onServerUrlChanged("http://192.168.1.10:8787")
         vm.testAndConnect()
         advanceUntilIdle()
@@ -85,7 +85,7 @@ class ServerSetupViewModelTest {
     @Test
     fun editModeFailureKeepsOldServerAndDoesNotSave() = runTest(dispatcher) {
         val config = FakeServerConfigRepository(initialBaseUrl = "http://old:8787/")
-        val vm = viewModel(FakeHWatchApi { throw IOException("no route") }, config)
+        val vm = viewModel(FakeHWatchApi(onAuthStatus = { throw IOException("no route") }), config)
         vm.prepare("http://old:8787/")
         vm.onServerUrlChanged("http://new:8787/")
         vm.testAndConnect()
@@ -98,7 +98,7 @@ class ServerSetupViewModelTest {
     @Test
     fun editModeCancelKeepsOldServer() = runTest(dispatcher) {
         val config = FakeServerConfigRepository(initialBaseUrl = "http://old:8787/")
-        val vm = viewModel(FakeHWatchApi { DashboardDto() }, config)
+        val vm = viewModel(FakeHWatchApi(onAuthStatus = { com.hwatch.app.data.auth.AuthStatusDto(configured = true) }), config)
         vm.prepare("http://old:8787/")
         vm.onServerUrlChanged("http://new:8787/")
         // 用户取消，不发请求
@@ -110,7 +110,7 @@ class ServerSetupViewModelTest {
     @Test
     fun editModeSuccessAtomicallySavesNewServer() = runTest(dispatcher) {
         val config = FakeServerConfigRepository(initialBaseUrl = "http://old:8787/")
-        val vm = viewModel(FakeHWatchApi { DashboardDto() }, config)
+        val vm = viewModel(FakeHWatchApi(onAuthStatus = { com.hwatch.app.data.auth.AuthStatusDto(configured = true) }), config)
         vm.prepare("http://old:8787/")
         vm.onServerUrlChanged("http://new:8787/")
         vm.testAndConnect()
@@ -122,7 +122,7 @@ class ServerSetupViewModelTest {
     @Test
     fun prepareResetsStateAndPrefillsUrl() = runTest(dispatcher) {
         val config = FakeServerConfigRepository()
-        val vm = viewModel(FakeHWatchApi { throw IOException("no route") }, config)
+        val vm = viewModel(FakeHWatchApi(onAuthStatus = { throw IOException("no route") }), config)
         vm.onServerUrlChanged("http://x:1/")
         vm.testAndConnect()
         advanceUntilIdle()

@@ -59,6 +59,7 @@ class SettingsViewModel(
                     }
                 }
                 is ApiResult.HttpError -> onLoadFailure(SettingsError.HTTP)
+                is ApiResult.Unauthorized, is ApiResult.Forbidden -> onLoadFailure(SettingsError.HTTP)
                 is ApiResult.ParseError -> onLoadFailure(SettingsError.PARSE)
                 is ApiResult.NetworkError -> onLoadFailure(
                     if (result.cause is SocketTimeoutException) SettingsError.TIMEOUT else SettingsError.UNREACHABLE,

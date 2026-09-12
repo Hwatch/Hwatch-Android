@@ -60,12 +60,14 @@ import com.hwatch.app.ui.common.LocalSnackbarHostState
 fun SettingsScreen(
     viewModel: SettingsViewModel,
     onChangeServer: () -> Unit,
+    onLogout: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snapshot = state
     val snackbarHostState = LocalSnackbarHostState.current
     var showDiscardDialog by remember { mutableStateOf(false) }
     var showChangeServerDialog by remember { mutableStateOf(false) }
+    var showLogoutDialog by remember { mutableStateOf(false) }
     var secretVisible by remember { mutableStateOf(false) }
 
     val savedText = stringResource(R.string.settings_saved)
@@ -115,6 +117,7 @@ fun SettingsScreen(
                     onSecretVisibleChange = { secretVisible = it },
                     onDraftChange = viewModel::updateDraft,
                     onChangeServer = { showChangeServerDialog = true },
+                    onLogout = { showLogoutDialog = true },
                 )
             }
         }
@@ -158,6 +161,27 @@ fun SettingsScreen(
             },
         )
     }
+
+    if (showLogoutDialog) {
+        AlertDialog(
+            onDismissRequest = { showLogoutDialog = false },
+            title = { Text(stringResource(R.string.settings_logout_confirm_title)) },
+            text = { Text(stringResource(R.string.settings_logout_confirm_desc)) },
+            confirmButton = {
+                TextButton(onClick = {
+                    showLogoutDialog = false
+                    onLogout()
+                }) {
+                    Text(stringResource(R.string.settings_logout))
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showLogoutDialog = false }) {
+                    Text(stringResource(R.string.common_cancel))
+                }
+            },
+        )
+    }
 }
 
 @Composable
@@ -167,6 +191,7 @@ private fun SettingsForm(
     onSecretVisibleChange: (Boolean) -> Unit,
     onDraftChange: ((SettingsDraft) -> SettingsDraft) -> Unit,
     onChangeServer: () -> Unit,
+    onLogout: () -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.TopCenter) {
         LazyColumn(
@@ -182,6 +207,13 @@ private fun SettingsForm(
                 )
                 TextButton(onClick = onChangeServer) {
                     Text(stringResource(R.string.settings_change_server))
+                }
+            }
+        }
+        item {
+            SettingsSection(R.string.settings_account) {
+                TextButton(onClick = onLogout) {
+                    Text(stringResource(R.string.settings_logout))
                 }
             }
         }

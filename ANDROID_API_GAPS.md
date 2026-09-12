@@ -3,17 +3,21 @@
 依据根目录 `openapi.yaml`（机器可读唯一契约）+ `API_V1.md`（人工阅读指南）。
 **未修改服务端契约文件**，仅记录 Android 端取舍与未接入项。
 
-## 1. 管理员认证（BREAKING，Release blocker）
+## 1. 管理员认证（已实现）
 
-服务端 `cmd/r34watch/auth.go` 的 `requireAuth` 包裹整个 mux：除
-`/api/auth/status`、`/api/auth/setup`、`/api/auth/login` 外，所有 `/api/`、`/media/`、`/thumb/`
-（含 `/api/events`）都要求有效的 `hwatch_session` Cookie；非 GET/HEAD/OPTIONS 还要求
-`X-CSRF-Token`（与会话 csrf_token 常量时间比较）。
+服务端 `requireAuth` 包裹整个 mux：除 `/api/auth/status`、`/api/auth/setup`、`/api/auth/login`
+外，所有 `/api/`、`/media/`、`/thumb/`（含 `/api/events`）要求 `hwatch_session` Cookie；
+非 GET/HEAD/OPTIONS 还要求 `X-CSRF-Token`。
 
-- 当前 Android **没有登录/会话处理**，因此无法连接启用认证的服务端（会得到 401/403）。
-- 这不是 optional API，而是对现有全部功能的阻断。属于产品决策：Android 1.0 是否支持
-  首次 setup + 登录 + Cookie/CSRF 持久化（需要新的登录/初始化 UI）。
-- 本 Phase（8.5）未实现，记录为 blocker，不猜测替代方案。
+Android 实现（Phase 8.6）：
+- `GET /api/auth/status` 判断 `configured` / `authenticated`。
+- 未初始化 → Initial Admin Setup（`POST /api/auth/setup`，`{username,password}`，username 3–64 / password 10–256）。
+- 已初始化无会话 → Login（`POST /api/auth/login`）。
+- 会话/CSRF：`hwatch_session`（HttpOnly、SameSite=Strict、Path=/、7 天）由 `HWatchCookieJar` 按 origin 隔离；
+  CSRF 从 login/setup/status/me 响应体 `csrf_token` 获取，`AuthInterceptor` 仅对当前 HWatch origin 的写请求注入。
+- 401 → 全局清会话回 Login（login/setup/status 除外）。
+- 持久化：`SESSION_PERSISTENCE = ENCRYPTED_PERSISTENT`（服务端 MaxAge=7d），Android Keystore AES/GCM + DataStore。
+- 不再有认证 blocker。
 
 ## 2. Downloads / SSE
 

@@ -186,6 +186,7 @@ class DownloadsViewModel(
                     )
                 }
                 is ApiResult.HttpError -> onDiscoveredFailure(DownloadsError.HTTP)
+                is ApiResult.Unauthorized, is ApiResult.Forbidden -> onDiscoveredFailure(DownloadsError.HTTP)
                 is ApiResult.ParseError -> onDiscoveredFailure(DownloadsError.PARSE)
                 is ApiResult.NetworkError -> onDiscoveredFailure(
                     if (result.cause is SocketTimeoutException) DownloadsError.TIMEOUT else DownloadsError.UNREACHABLE,
@@ -225,6 +226,7 @@ class DownloadsViewModel(
                     )
                 }
                 is ApiResult.HttpError -> onTasksFailure(isRefresh, silent, DownloadsError.HTTP)
+                is ApiResult.Unauthorized, is ApiResult.Forbidden -> onTasksFailure(isRefresh, silent, DownloadsError.HTTP)
                 is ApiResult.ParseError -> onTasksFailure(isRefresh, silent, DownloadsError.PARSE)
                 is ApiResult.NetworkError -> onTasksFailure(
                     isRefresh,

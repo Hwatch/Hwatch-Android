@@ -96,6 +96,7 @@ class AddSubscriptionViewModel(
             when (val result = repository.createSubscription(url, state.downloadExisting)) {
                 is ApiResult.Success -> _uiState.update { it.copy(isCreating = false, created = true) }
                 is ApiResult.HttpError -> onCreateFailure(SubscriptionsError.HTTP)
+                is ApiResult.Unauthorized, is ApiResult.Forbidden -> onCreateFailure(SubscriptionsError.HTTP)
                 is ApiResult.ParseError -> onCreateFailure(SubscriptionsError.PARSE)
                 is ApiResult.NetworkError -> onCreateFailure(
                     if (result.cause is SocketTimeoutException) SubscriptionsError.TIMEOUT else SubscriptionsError.UNREACHABLE,
@@ -115,6 +116,7 @@ class AddSubscriptionViewModel(
                 it.copy(results = result.data.items, isSearching = false, searchError = null)
             }
             is ApiResult.HttpError -> onSearchFailure(SubscriptionsError.HTTP)
+            is ApiResult.Unauthorized, is ApiResult.Forbidden -> onSearchFailure(SubscriptionsError.HTTP)
             is ApiResult.ParseError -> onSearchFailure(SubscriptionsError.PARSE)
             is ApiResult.NetworkError -> onSearchFailure(
                 if (result.cause is SocketTimeoutException) SubscriptionsError.TIMEOUT else SubscriptionsError.UNREACHABLE,

@@ -81,6 +81,7 @@ class DashboardViewModel(
                     _uiState.value = DashboardUiState.Content(result.data)
                 }
                 is ApiResult.HttpError -> onFailure(isRefresh, DashboardError.HTTP)
+                is ApiResult.Unauthorized, is ApiResult.Forbidden -> onFailure(isRefresh, DashboardError.HTTP)
                 is ApiResult.ParseError -> onFailure(isRefresh, DashboardError.PARSE)
                 is ApiResult.NetworkError -> onFailure(
                     isRefresh,

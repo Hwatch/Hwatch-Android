@@ -20,9 +20,16 @@ object NetworkModule {
         coerceInputValues = false
     }
 
-    fun createOkHttpClient(enableBodyLogging: Boolean): OkHttpClient {
-        return OkHttpClient.Builder()
+    fun createOkHttpClient(
+        enableBodyLogging: Boolean,
+        cookieJar: okhttp3.CookieJar? = null,
+        authInterceptor: okhttp3.Interceptor? = null,
+    ): OkHttpClient {
+        val builder = OkHttpClient.Builder()
             .addInterceptor(RedactingInterceptor(enableBodyLogging))
+        authInterceptor?.let { builder.addInterceptor(it) }
+        cookieJar?.let { builder.cookieJar(it) }
+        return builder
             .connectTimeout(10, TimeUnit.SECONDS)
             .readTimeout(60, TimeUnit.SECONDS)
             .writeTimeout(30, TimeUnit.SECONDS)

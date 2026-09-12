@@ -16,6 +16,12 @@ sealed interface ApiResult<out T> {
 
     data class HttpError(val code: Int, val message: String?) : ApiResult<Nothing>
 
+    /** 401：会话无效/过期。Root 应切回登录。 */
+    data class Unauthorized(val message: String?) : ApiResult<Nothing>
+
+    /** 403：通常为 CSRF 校验失败。 */
+    data class Forbidden(val message: String?) : ApiResult<Nothing>
+
     data class NetworkError(val cause: Throwable) : ApiResult<Nothing>
 
     data class ParseError(val cause: Throwable) : ApiResult<Nothing>

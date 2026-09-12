@@ -29,6 +29,7 @@ fun HWatchApp(
     viewModelFactory: ViewModelProvider.Factory,
     serverBaseUrl: String,
     onChangeServer: () -> Unit,
+    onLogout: () -> Unit,
 ) {
     val navController = rememberNavController()
     val backStackEntry by navController.currentBackStackEntryAsState()
@@ -67,6 +68,7 @@ fun HWatchApp(
                 viewModelFactory = viewModelFactory,
                 serverBaseUrl = serverBaseUrl,
                 onChangeServer = onChangeServer,
+                onLogout = onLogout,
                 modifier = Modifier.padding(innerPadding),
             )
         }

@@ -30,21 +30,23 @@ sealed interface ServerConnectionResult {
 
 /**
  * 仅用于 Server Setup 的“测试并连接”：规范化地址 → 构建临时 [HWatchApi] →
- * `GET /api/dashboard?language=...`。不保存任何配置，保存由 ViewModel 在成功后执行。
+ * `GET /api/auth/status`（公开、无需会话）。用于确认候选地址是 HWatch 且可达；
+ * 保存后由 Auth flow 决定 setup/login。不保存任何配置。
  */
 class ServerConnectionRepository(
     private val buildApi: (String) -> Result<HWatchApi>,
 ) {
 
-    suspend fun testConnection(rawUrl: String, language: String): ServerConnectionResult {
+    suspend fun testConnection(rawUrl: String): ServerConnectionResult {
         val normalized = ServerUrl.normalize(rawUrl).getOrElse {
             return ServerConnectionResult.Failure(ConnectionFailure.INVALID_URL)
         }
         val api = buildApi(normalized).getOrElse {
             return ServerConnectionResult.Failure(ConnectionFailure.INVALID_URL)
         }
-        return when (val result = safeApiCall { api.dashboard(language) }) {
+        return when (val result = safeApiCall { api.authStatus() }) {
             is ApiResult.Success -> ServerConnectionResult.Success(normalized)
+            is ApiResult.Unauthorized, is ApiResult.Forbidden -> ServerConnectionResult.Success(normalized)
             is ApiResult.HttpError -> ServerConnectionResult.Failure(ConnectionFailure.HTTP)
             is ApiResult.ParseError -> ServerConnectionResult.Failure(
                 kind = ConnectionFailure.PARSE,

@@ -35,6 +35,7 @@ fun HWatchNavHost(
     viewModelFactory: ViewModelProvider.Factory,
     serverBaseUrl: String,
     onChangeServer: () -> Unit,
+    onLogout: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     NavHost(
@@ -80,6 +81,7 @@ fun HWatchNavHost(
             SettingsScreen(
                 viewModel = settingsViewModel,
                 onChangeServer = onChangeServer,
+                onLogout = onLogout,
             )
         }
         composable(

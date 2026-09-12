@@ -1,6 +1,10 @@
 package com.hwatch.app.testutil
 
 import com.hwatch.app.data.apiclient.HWatchApi
+import com.hwatch.app.data.auth.AuthLogoutResponse
+import com.hwatch.app.data.auth.AuthSessionDto
+import com.hwatch.app.data.auth.AuthStatusDto
+import com.hwatch.app.data.auth.Credentials
 import com.hwatch.app.data.model.ActionResponse
 import com.hwatch.app.data.model.CreateSubscriptionRequest
 import com.hwatch.app.data.model.CreateSubscriptionResponse
@@ -68,10 +72,25 @@ class FakeHWatchApi(
     var onCheckSubscription: suspend (String) -> ActionResponse = { ActionResponse("started") },
     var onGetSettings: suspend () -> SettingsDto = { SettingsDto() },
     var onPutSettings: suspend (UpdateSettingsRequest) -> SettingsDto = { SettingsDto() },
+    var onAuthStatus: suspend () -> AuthStatusDto = { AuthStatusDto(configured = true, authenticated = false) },
+    var onAuthSetup: suspend (Credentials) -> AuthSessionDto = { AuthSessionDto(authenticated = true, username = it.username, csrfToken = "csrf") },
+    var onAuthLogin: suspend (Credentials) -> AuthSessionDto = { AuthSessionDto(authenticated = true, username = it.username, csrfToken = "csrf") },
+    var onAuthMe: suspend () -> AuthSessionDto = { AuthSessionDto(authenticated = true, username = "admin", csrfToken = "csrf") },
+    var onAuthLogout: suspend () -> AuthLogoutResponse = { AuthLogoutResponse(authenticated = false) },
     var onDashboard: suspend (String?) -> DashboardDto = { DashboardDto() },
 ) : HWatchApi {
 
     override suspend fun dashboard(language: String?): DashboardDto = onDashboard(language)
+
+    override suspend fun authStatus(): AuthStatusDto = onAuthStatus()
+
+    override suspend fun authSetup(body: Credentials): AuthSessionDto = onAuthSetup(body)
+
+    override suspend fun authLogin(body: Credentials): AuthSessionDto = onAuthLogin(body)
+
+    override suspend fun authMe(): AuthSessionDto = onAuthMe()
+
+    override suspend fun authLogout(): AuthLogoutResponse = onAuthLogout()
 
     override suspend fun videos(
         limit: Int?,
