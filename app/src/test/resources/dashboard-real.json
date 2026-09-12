@@ -1,0 +1,110 @@
+{
+  "subscriptions": [
+    {
+      "id": 1,
+      "slug": "source:creator",
+      "platform": "source",
+      "subscription_type": "creator",
+      "source_id": "3382",
+      "name": "Creator",
+      "url": "https://example.com/creator",
+      "avatar_url": "",
+      "external_links": [
+        { "Image": "", "Name": "x.com", "URL": "https://x.com/creator" }
+      ],
+      "enabled": true,
+      "baseline_complete": true,
+      "created_at": "2026-06-01T00:00:00Z",
+      "last_checked_at": "2026-09-11T16:39:37Z",
+      "last_error": "",
+      "progress": {
+        "total": 737,
+        "completed": 583,
+        "active": 2,
+        "waiting": 152,
+        "failed": 0,
+        "bytes_downloaded": 1000,
+        "total_bytes": 2000
+      }
+    }
+  ],
+  "videos": [
+    {
+      "video_id": "source:3144962",
+      "subscription_slug": "source:creator",
+      "title": "Original title",
+      "translated_title": "中文标题",
+      "translated_tags": ["标签一", "标签二"],
+      "translation_language": "zh-CN",
+      "page_url": "https://example.com/v/3144962",
+      "published_at": "2026-07-26",
+      "discovered_at": "2026-09-11T16:39:37Z",
+      "downloaded_at": "2026-09-11T18:00:00Z",
+      "updated_at": "2026-09-11T18:00:00Z",
+      "thumbnail_url": "",
+      "views": 63132,
+      "duration_seconds": 171,
+      "creator_name": "Creator",
+      "creator_url": "",
+      "creator_avatar": "",
+      "uploader_name": "uploader",
+      "uploader_url": "",
+      "uploader_avatar": "",
+      "categories": [{ "Name": "Animation", "URL": "", "Image": "" }],
+      "tags": [{ "Name": "sound", "URL": "" }],
+      "external_links": [
+        { "Image": "", "Name": "x.com", "URL": "https://x.com/p/3144962" }
+      ],
+      "status": "completed",
+      "aria_gid": "0123456789abcdef",
+      "file_path": "/media/source:3144962.mp4",
+      "plex_path": "/media/source:3144962.mp4",
+      "bytes_downloaded": 123456,
+      "total_bytes": 123456,
+      "download_speed": 0,
+      "connections": 0,
+      "video_codec": "h264",
+      "audio_codec": "aac",
+      "container": "mp4",
+      "width": 1920,
+      "height": 1080,
+      "frame_rate": 30,
+      "bit_rate": 4000000,
+      "bit_depth": 8,
+      "media_probed_at": "2026-09-11T18:00:10Z",
+      "transcode_status": "not_requested",
+      "plex_season": 1,
+      "plex_episode": 398,
+      "error": ""
+    }
+  ],
+  "recently_played": [
+    {
+      "video_id": "source:2",
+      "title": "Played",
+      "translated_title": "",
+      "published_at": "2026-06-10T00:00:00Z",
+      "status": "completed",
+      "creator_name": "Creator",
+      "external_links": [],
+      "categories": [],
+      "tags": []
+    }
+  ],
+  "counts": {
+    "videos": 874,
+    "active": 2,
+    "waiting": 100,
+    "completed": 600,
+    "discovered": 172
+  },
+  "traffic_bytes": 123456789,
+  "library_bytes": 987654321000,
+  "current_download_speed": 850000,
+  "current_connections": 8,
+  "disk_total": 965554995200,
+  "disk_free": 273582915584,
+  "aria2_online": true,
+  "timezone": "Asia/Shanghai",
+  "downloads_paused": false
+}

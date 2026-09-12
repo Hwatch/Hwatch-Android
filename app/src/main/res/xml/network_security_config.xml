@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  服务端地址由用户在运行时填写，可能是局域网 IP、mDNS/.local、IPv6、
+  Tailscale/VPN 或 HTTPS 公网反代，无法预先穷举，故在 base-config 全局放行
+  cleartext。安全策略：HTTP 连接仅在 UI 上提示"未加密连接，仅建议可信网络"。
+-->
+<network-security-config>
+    <base-config cleartextTrafficPermitted="true" />
+</network-security-config>
