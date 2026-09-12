@@ -27,6 +27,16 @@ class RedactingInterceptorTest {
     }
 
     @Test
+    fun authPathsNeverBodyLogged() {
+        assertFalse(RedactingInterceptor.shouldLogBody("/api/auth/status"))
+        assertFalse(RedactingInterceptor.shouldLogBody("/api/auth/setup"))
+        assertFalse(RedactingInterceptor.shouldLogBody("/api/auth/login"))
+        assertFalse(RedactingInterceptor.shouldLogBody("/api/auth/me"))
+        assertFalse(RedactingInterceptor.shouldLogBody("/api/auth/logout"))
+        assertFalse(RedactingInterceptor.shouldLogBody("/api/auth"))
+    }
+
+    @Test
     fun mediaAndThumbNeverBodyLogged() {
         assertFalse(RedactingInterceptor.shouldLogBody("/media/abc"))
         assertFalse(RedactingInterceptor.shouldLogBody("/thumb/abc"))

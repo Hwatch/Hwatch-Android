@@ -54,7 +54,10 @@ class RedactingInterceptor(
             if (!requestPath.startsWith("/api/")) return false
             val apiPath = requestPath.substringAfter("/api/", "")
             if (apiPath.isEmpty()) return false
-            return apiPath != "settings" && apiPath != "events"
+            if (apiPath == "settings" || apiPath == "events") return false
+            // 认证相关永远禁止 body 日志（可能含 password / session / csrf）。
+            if (apiPath == "auth" || apiPath.startsWith("auth/")) return false
+            return true
         }
 
         /** 请求行：不含 query，避免把搜索词/参数写进日志。 */
