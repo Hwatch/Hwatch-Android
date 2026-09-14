@@ -67,6 +67,7 @@ fun DownloadsScreen(
     viewModel: DownloadsViewModel,
     baseUrl: String,
     onPlayVideo: (VideoDto) -> Unit,
+    onChangeServer: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = LocalSnackbarHostState.current
@@ -118,6 +119,7 @@ fun DownloadsScreen(
                         onPlayVideo = onPlayVideo,
                         onAction = viewModel::onAction,
                         onDeleteRequest = { deleteTarget = it },
+                        onChangeServer = onChangeServer,
                     )
                 } else {
                     DiscoveredTab(
@@ -127,6 +129,7 @@ fun DownloadsScreen(
                         onRetry = { viewModel.loadDiscovered(refresh = true) },
                         onDownload = { viewModel.onAction(it.videoId, DownloadAction.DOWNLOAD) },
                         onDownloadAll = { showDownloadAll = true },
+                        onChangeServer = onChangeServer,
                     )
                 }
             }
@@ -249,15 +252,26 @@ private fun TasksTab(
     onPlayVideo: (VideoDto) -> Unit,
     onAction: (String, DownloadAction) -> Unit,
     onDeleteRequest: (VideoDto) -> Unit,
+    onChangeServer: () -> Unit,
 ) {
     when {
         state.isInitialLoading -> LoadingState()
-        state.initialError != null && state.tasks.isEmpty() -> FullScreenErrorState(
-            icon = Icons.Filled.CloudOff,
-            title = stringResource(R.string.downloads_load_error),
-            message = stringResource(downloadsErrorRes(state.initialError)),
-            onRetry = onRetry,
-        )
+        state.initialError != null && state.tasks.isEmpty() -> {
+            val networkError = state.initialError == DownloadsError.UNREACHABLE ||
+                state.initialError == DownloadsError.TIMEOUT
+            FullScreenErrorState(
+                icon = Icons.Filled.CloudOff,
+                title = stringResource(R.string.downloads_load_error),
+                message = stringResource(downloadsErrorRes(state.initialError)),
+                onRetry = onRetry,
+                secondaryActionLabel = if (networkError) {
+                    stringResource(R.string.settings_change_server)
+                } else {
+                    null
+                },
+                onSecondaryAction = if (networkError) onChangeServer else null,
+            )
+        }
         state.tasks.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             EmptyState(
                 icon = Icons.Filled.Download,
@@ -297,15 +311,26 @@ private fun DiscoveredTab(
     onRetry: () -> Unit,
     onDownload: (VideoDto) -> Unit,
     onDownloadAll: () -> Unit,
+    onChangeServer: () -> Unit,
 ) {
     when {
         state.discoveredLoading -> LoadingState()
-        state.discoveredError != null && state.discovered.isEmpty() -> FullScreenErrorState(
-            icon = Icons.Filled.CloudOff,
-            title = stringResource(R.string.downloads_load_error),
-            message = stringResource(downloadsErrorRes(state.discoveredError)),
-            onRetry = onRetry,
-        )
+        state.discoveredError != null && state.discovered.isEmpty() -> {
+            val networkError = state.discoveredError == DownloadsError.UNREACHABLE ||
+                state.discoveredError == DownloadsError.TIMEOUT
+            FullScreenErrorState(
+                icon = Icons.Filled.CloudOff,
+                title = stringResource(R.string.downloads_load_error),
+                message = stringResource(downloadsErrorRes(state.discoveredError)),
+                onRetry = onRetry,
+                secondaryActionLabel = if (networkError) {
+                    stringResource(R.string.settings_change_server)
+                } else {
+                    null
+                },
+                onSecondaryAction = if (networkError) onChangeServer else null,
+            )
+        }
         state.discovered.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             EmptyState(
                 icon = Icons.Filled.Download,

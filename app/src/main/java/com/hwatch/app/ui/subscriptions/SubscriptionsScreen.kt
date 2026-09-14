@@ -63,6 +63,7 @@ import com.hwatch.app.util.TimeUtils
 fun SubscriptionsScreen(
     viewModel: SubscriptionsViewModel,
     addViewModel: AddSubscriptionViewModel,
+    onChangeServer: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snapshot = state
@@ -111,12 +112,22 @@ fun SubscriptionsScreen(
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             when {
                 state.isLoading -> LoadingState()
-                snapshot.error != null && snapshot.items.isEmpty() -> FullScreenErrorState(
-                    icon = Icons.Filled.CloudOff,
-                    title = stringResource(R.string.subscriptions_load_error),
-                    message = stringResource(subscriptionsErrorRes(snapshot.error)),
-                    onRetry = viewModel::retry,
-                )
+                snapshot.error != null && snapshot.items.isEmpty() -> {
+                    val networkError = snapshot.error == SubscriptionsError.UNREACHABLE ||
+                        snapshot.error == SubscriptionsError.TIMEOUT
+                    FullScreenErrorState(
+                        icon = Icons.Filled.CloudOff,
+                        title = stringResource(R.string.subscriptions_load_error),
+                        message = stringResource(subscriptionsErrorRes(snapshot.error)),
+                        onRetry = viewModel::retry,
+                        secondaryActionLabel = if (networkError) {
+                            stringResource(R.string.settings_change_server)
+                        } else {
+                            null
+                        },
+                        onSecondaryAction = if (networkError) onChangeServer else null,
+                    )
+                }
                 snapshot.items.isEmpty() -> Box(Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
                     EmptyState(
                         icon = Icons.Filled.Subscriptions,

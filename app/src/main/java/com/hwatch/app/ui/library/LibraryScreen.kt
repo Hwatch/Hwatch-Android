@@ -67,6 +67,7 @@ fun LibraryScreen(
     viewModel: LibraryViewModel,
     baseUrl: String,
     onVideoClick: (VideoDto) -> Unit,
+    onChangeServer: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snapshot = state
@@ -97,12 +98,22 @@ fun LibraryScreen(
             Box(modifier = Modifier.fillMaxSize()) {
                 when {
                     snapshot.isInitialLoading -> LibrarySkeletonGrid()
-                    snapshot.error != null && snapshot.items.isEmpty() -> FullScreenErrorState(
-                        icon = Icons.Filled.CloudOff,
-                        title = stringResource(R.string.library_load_error),
-                        message = stringResource(libraryErrorRes(snapshot.error)),
-                        onRetry = viewModel::retry,
-                    )
+                    snapshot.error != null && snapshot.items.isEmpty() -> {
+                        val networkError = snapshot.error == LibraryError.UNREACHABLE ||
+                            snapshot.error == LibraryError.TIMEOUT
+                        FullScreenErrorState(
+                            icon = Icons.Filled.CloudOff,
+                            title = stringResource(R.string.library_load_error),
+                            message = stringResource(libraryErrorRes(snapshot.error)),
+                            onRetry = viewModel::retry,
+                            secondaryActionLabel = if (networkError) {
+                                stringResource(R.string.settings_change_server)
+                            } else {
+                                null
+                            },
+                            onSecondaryAction = if (networkError) onChangeServer else null,
+                        )
+                    }
                     snapshot.items.isEmpty() -> Box(
                         modifier = Modifier.fillMaxSize(),
                         contentAlignment = Alignment.Center,

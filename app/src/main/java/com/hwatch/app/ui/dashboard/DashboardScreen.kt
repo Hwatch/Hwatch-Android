@@ -75,6 +75,7 @@ fun DashboardScreen(
     baseUrl: String,
     onVideoClick: (VideoDto) -> Unit,
     onSeeAllLibrary: () -> Unit,
+    onChangeServer: () -> Unit,
 ) {
     val state by viewModel.uiState.collectAsStateWithLifecycle()
     val snackbarHostState = LocalSnackbarHostState.current
@@ -85,12 +86,22 @@ fun DashboardScreen(
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             when (val current = state) {
                 DashboardUiState.Loading -> LoadingState()
-                is DashboardUiState.Error -> FullScreenErrorState(
-                    icon = Icons.Filled.CloudOff,
-                    title = stringResource(R.string.dashboard_load_error),
-                    message = stringResource(dashboardErrorRes(current.error)),
-                    onRetry = viewModel::retry,
-                )
+                is DashboardUiState.Error -> {
+                    val networkError = current.error == DashboardError.UNREACHABLE ||
+                        current.error == DashboardError.TIMEOUT
+                    FullScreenErrorState(
+                        icon = Icons.Filled.CloudOff,
+                        title = stringResource(R.string.dashboard_load_error),
+                        message = stringResource(dashboardErrorRes(current.error)),
+                        onRetry = viewModel::retry,
+                        secondaryActionLabel = if (networkError) {
+                            stringResource(R.string.settings_change_server)
+                        } else {
+                            null
+                        },
+                        onSecondaryAction = if (networkError) onChangeServer else null,
+                    )
+                }
                 is DashboardUiState.Content -> {
                     val refreshFailedText = stringResource(R.string.snackbar_refresh_failed)
                     LaunchedEffect(current.refreshErrorId) {

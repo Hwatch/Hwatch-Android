@@ -86,6 +86,11 @@
     <string name="library_filter_no_options">暂无可选项</string>
     <string name="library_filter_apply">应用</string>
     <string name="library_filter_reset">重置</string>
+    <string name="library_filter_search_hint">搜索筛选项</string>
+    <string name="library_filter_selected">已选</string>
+    <string name="library_filter_show_more">展开全部 (%1$d)</string>
+    <string name="library_filter_show_less">收起</string>
+    <string name="library_filter_no_match">无匹配项</string>
     <string name="library_min_height_any">不限</string>
     <string name="library_tag_mode_all">全部匹配</string>
     <string name="library_tag_mode_any">任意匹配</string>

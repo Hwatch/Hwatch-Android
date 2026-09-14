@@ -31,6 +31,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -74,6 +75,7 @@ fun PlayerScreen(
     args: PlayerArgs,
     serverBaseUrl: String,
     onBack: () -> Unit,
+    onChangeServer: () -> Unit,
 ) {
     val player by viewModel.player.collectAsStateWithLifecycle()
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -179,7 +181,11 @@ fun PlayerScreen(
                     )
                 },
                 errorOverlay = { _ ->
-                    PlayerErrorOverlay(error = uiState.error, onRetry = viewModel::retry)
+                    PlayerErrorOverlay(
+                        error = uiState.error,
+                        onRetry = viewModel::retry,
+                        onChangeServer = onChangeServer,
+                    )
                 },
             )
 
@@ -260,7 +266,11 @@ private fun PlayerTopControls(
 }
 
 @Composable
-private fun PlayerErrorOverlay(error: PlaybackErrorKind?, onRetry: () -> Unit) {
+private fun PlayerErrorOverlay(
+    error: PlaybackErrorKind?,
+    onRetry: () -> Unit,
+    onChangeServer: () -> Unit,
+) {
     if (error == null) return
     Column(
         modifier = Modifier
@@ -286,6 +296,14 @@ private fun PlayerErrorOverlay(error: PlaybackErrorKind?, onRetry: () -> Unit) {
         Spacer(modifier = Modifier.height(16.dp))
         Button(onClick = onRetry) {
             Text(stringResource(R.string.player_retry))
+        }
+        if (error == PlaybackErrorKind.NETWORK) {
+            TextButton(onClick = onChangeServer) {
+                Text(
+                    text = stringResource(R.string.settings_change_server),
+                    color = Color.White,
+                )
+            }
         }
     }
 }

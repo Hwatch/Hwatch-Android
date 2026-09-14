@@ -102,7 +102,7 @@ fun EmptyState(
     }
 }
 
-/** 全屏错误状态：icon + 标题 + 说明 + 重试。用于页面无法加载。 */
+/** 全屏错误状态：icon + 标题 + 说明 + 重试（+ 可选次要动作，如「更换服务器」）。 */
 @Composable
 fun FullScreenErrorState(
     icon: ImageVector,
@@ -110,6 +110,8 @@ fun FullScreenErrorState(
     message: String,
     onRetry: () -> Unit,
     modifier: Modifier = Modifier,
+    secondaryActionLabel: String? = null,
+    onSecondaryAction: (() -> Unit)? = null,
 ) {
     Column(
         modifier = modifier.fillMaxSize().padding(HWatchSpacing.xl),
@@ -138,6 +140,12 @@ fun FullScreenErrorState(
         Spacer(modifier = Modifier.size(HWatchSpacing.md))
         Button(onClick = onRetry) {
             Text(stringResource(R.string.common_retry))
+        }
+        if (secondaryActionLabel != null && onSecondaryAction != null) {
+            Spacer(modifier = Modifier.size(HWatchSpacing.xxs))
+            TextButton(onClick = onSecondaryAction) {
+                Text(secondaryActionLabel)
+            }
         }
     }
 }

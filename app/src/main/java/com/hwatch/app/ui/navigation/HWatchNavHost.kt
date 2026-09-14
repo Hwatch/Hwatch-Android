@@ -50,6 +50,7 @@ fun HWatchNavHost(
                 baseUrl = serverBaseUrl,
                 onVideoClick = { video -> navController.navigateToPlayer(video.videoId, video.translatedTitle, video.title) },
                 onSeeAllLibrary = { navController.navigateToTab(AppDestination.LIBRARY.route) },
+                onChangeServer = onChangeServer,
             )
         }
         composable(AppDestination.LIBRARY.route) {
@@ -58,6 +59,7 @@ fun HWatchNavHost(
                 viewModel = libraryViewModel,
                 baseUrl = serverBaseUrl,
                 onVideoClick = { video -> navController.navigateToPlayer(video.videoId, video.translatedTitle, video.title) },
+                onChangeServer = onChangeServer,
             )
         }
         composable(AppDestination.DOWNLOADS.route) {
@@ -66,6 +68,7 @@ fun HWatchNavHost(
                 viewModel = downloadsViewModel,
                 baseUrl = serverBaseUrl,
                 onPlayVideo = { video -> navController.navigateToPlayer(video.videoId, video.translatedTitle, video.title) },
+                onChangeServer = onChangeServer,
             )
         }
         composable(AppDestination.SUBSCRIPTIONS.route) {
@@ -74,6 +77,7 @@ fun HWatchNavHost(
             SubscriptionsScreen(
                 viewModel = subscriptionsViewModel,
                 addViewModel = addSubscriptionViewModel,
+                onChangeServer = onChangeServer,
             )
         }
         composable(AppDestination.SETTINGS.route) {
@@ -99,6 +103,7 @@ fun HWatchNavHost(
                     args = args,
                     serverBaseUrl = serverBaseUrl,
                     onBack = { navController.popBackStack() },
+                    onChangeServer = onChangeServer,
                 )
             }
         }

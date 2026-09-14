@@ -105,12 +105,22 @@ fun SettingsScreen(
         Box(modifier = Modifier.fillMaxSize().padding(innerPadding)) {
             when {
                 state.isLoading -> LoadingState()
-                snapshot.loadError != null -> FullScreenErrorState(
-                    icon = Icons.Filled.CloudOff,
-                    title = stringResource(R.string.settings_load_error),
-                    message = stringResource(settingsErrorRes(snapshot.loadError)),
-                    onRetry = viewModel::retry,
-                )
+                snapshot.loadError != null -> {
+                    val networkError = snapshot.loadError == SettingsError.UNREACHABLE ||
+                        snapshot.loadError == SettingsError.TIMEOUT
+                    FullScreenErrorState(
+                        icon = Icons.Filled.CloudOff,
+                        title = stringResource(R.string.settings_load_error),
+                        message = stringResource(settingsErrorRes(snapshot.loadError)),
+                        onRetry = viewModel::retry,
+                        secondaryActionLabel = if (networkError) {
+                            stringResource(R.string.settings_change_server)
+                        } else {
+                            null
+                        },
+                        onSecondaryAction = if (networkError) onChangeServer else null,
+                    )
+                }
                 else -> SettingsForm(
                     state = state,
                     secretVisible = secretVisible,
