@@ -8,12 +8,12 @@ class EventsUrlTest {
 
     @Test
     fun buildsApiEventsPath() {
-        assertEquals("http://192.168.0.249:8787/api/events", EventsUrl.build("http://192.168.0.249:8787/"))
+        assertEquals("http://192.168.1.100:8787/api/events", EventsUrl.build("http://192.168.1.100:8787/"))
     }
 
     @Test
     fun worksWithoutTrailingSlash() {
-        assertEquals("http://192.168.0.249:8787/api/events", EventsUrl.build("http://192.168.0.249:8787"))
+        assertEquals("http://192.168.1.100:8787/api/events", EventsUrl.build("http://192.168.1.100:8787"))
     }
 
     @Test

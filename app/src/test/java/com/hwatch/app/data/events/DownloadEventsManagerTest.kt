@@ -17,7 +17,7 @@ import org.junit.Test
 class DownloadEventsManagerTest {
 
     private val json = NetworkModule.createJson()
-    private val url = "http://192.168.0.249:8787/api/events"
+    private val url = "http://192.168.1.100:8787/api/events"
 
     @Test
     fun activateCreatesExactlyOneConnection() = runTest {

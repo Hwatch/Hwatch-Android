@@ -94,7 +94,7 @@ private fun VideoGridCardPreview() {
                 durationSeconds = 201,
                 views = 12400,
             ),
-            baseUrl = "http://192.168.0.249:8787/",
+            baseUrl = "http://192.168.1.100:8787/",
             onClick = {},
             modifier = Modifier.width(200.dp),
         )

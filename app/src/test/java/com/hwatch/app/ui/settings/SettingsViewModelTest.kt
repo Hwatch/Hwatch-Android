@@ -37,7 +37,7 @@ class SettingsViewModelTest {
 
     private fun viewModel(api: FakeHWatchApi): SettingsViewModel = SettingsViewModel(
         repository = SettingsRepository(apiProvider = { Result.success(api) }),
-        configRepository = FakeServerConfigRepository(initialBaseUrl = "http://192.168.0.249:8787/"),
+        configRepository = FakeServerConfigRepository(initialBaseUrl = "http://192.168.1.100:8787/"),
     )
 
     private val settings = SettingsDto(

@@ -559,7 +559,7 @@ private fun DashboardVideoCardPreview() {
                 durationSeconds = 201,
                 publishedAt = "2026-07-26",
             ),
-            baseUrl = "http://192.168.0.249:8787/",
+            baseUrl = "http://192.168.1.100:8787/",
             timezone = "Asia/Shanghai",
             onClick = {},
         )

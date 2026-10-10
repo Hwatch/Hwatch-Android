@@ -54,7 +54,7 @@ class DownloadsViewModelTest {
             repository = repository,
             transport = transport,
             json = json,
-            baseUrlProvider = { "http://192.168.0.249:8787/" },
+            baseUrlProvider = { "http://192.168.1.100:8787/" },
             calibrationDelayMillis = { 1000L },
         )
     }
