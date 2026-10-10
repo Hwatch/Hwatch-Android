@@ -15,9 +15,13 @@ jobs:
         with:
           distribution: temurin
           java-version: "21"
-      - uses: android-actions/setup-android@v3
-      - name: Accept SDK licenses
-        run: yes | sdkmanager --licenses >/dev/null || true
+      - name: Install / accept Android SDK packages
+        run: |
+          SDKMANAGER="$(find "${ANDROID_HOME:-/usr/local/lib/android/sdk}/cmdline-tools" -name sdkmanager 2>/dev/null | head -1)"
+          if [ -n "$SDKMANAGER" ]; then
+            yes | "$SDKMANAGER" --licenses >/dev/null 2>&1 || true
+            "$SDKMANAGER" "platform-tools" "platforms;android-37" "build-tools;36.0.0" >/dev/null 2>&1 || true
+          fi
       - name: Assemble debug APK
         run: ./gradlew :app:assembleDebug --no-daemon --stacktrace
       - name: Unit tests
